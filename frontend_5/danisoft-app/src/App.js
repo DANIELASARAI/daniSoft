@@ -13,7 +13,7 @@ function App() {
       {/* We got 2 public routes, Public and Login, after that, we gonna protect the rest of routes */}
       <Route path="/" element={<Layout />}>
         <Route index element={<Public />}></Route>
-        <Route element={<Login />}></Route>
+        <Route path="login" element={<Login />}></Route>
         <Route path="dash" element={<DashLayout />}>
           <Route index element={<Welcome />} />
           <Route path="notes">
