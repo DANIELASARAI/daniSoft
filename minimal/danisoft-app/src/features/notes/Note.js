@@ -6,6 +6,7 @@ import { selectNoteById } from "./notesApiSlice";
 
 const Note = ({ noteId }) => {
   const note = useSelector((state) => selectNoteById(state, noteId));
+  console.log("🚀 ~ file: Note.js:9 ~ Note ~ note:", note);
 
   const navigate = useNavigate();
 
@@ -24,6 +25,7 @@ const Note = ({ noteId }) => {
 
     return (
       <TableRow>
+        <TableCell>{note.title}</TableCell>
         <TableCell>
           {note.completed ? (
             <span className="note__status--completed">Completed</span>
@@ -33,7 +35,7 @@ const Note = ({ noteId }) => {
         </TableCell>
         <TableCell>{created}</TableCell>
         <TableCell>{updated}</TableCell>
-        <TableCell>{note.title}</TableCell>
+
         <TableCell>{note.username}</TableCell>
         <TableCell>
           <ButtonGroup

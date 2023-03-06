@@ -1,3 +1,4 @@
+import NoteAddTwoToneIcon from "@mui/icons-material/NoteAddTwoTone";
 import {
   Table,
   TableBody,
@@ -6,7 +7,11 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
+import { Box } from "@mui/system";
+import { Link } from "react-router-dom";
+import CircularIndeterminate from "../../utils/CircularProgress";
 import Note from "./Note";
 import { useGetNotesQuery } from "./notesApiSlice";
 const NotesList = () => {
@@ -16,11 +21,15 @@ const NotesList = () => {
     isSuccess,
     isError,
     error,
-  } = useGetNotesQuery();
+  } = useGetNotesQuery(undefined, {
+    pollingInterval: 15000, //Notes will be more active than users list
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
 
   let content;
 
-  if (isLoading) content = <p>Loading...</p>;
+  if (isLoading) content = <CircularIndeterminate />;
 
   if (isError) {
     content = <p className="errmsg">{error?.data?.message}</p>;
@@ -34,21 +43,30 @@ const NotesList = () => {
       : null;
 
     content = (
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Username</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Updated</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Owner</TableCell>
-              <TableCell>Edit</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{tableContent}</TableBody>
-        </Table>
-      </TableContainer>
+      <>
+        <Box py={2}>
+          <Link to="/dash/notes/new">
+            <IconButton aria-label="delete">
+              <NoteAddTwoToneIcon />
+            </IconButton>
+          </Link>
+        </Box>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Created</TableCell>
+                <TableCell>Updated</TableCell>
+                <TableCell>Owner</TableCell>
+                <TableCell>Edit</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{tableContent}</TableBody>
+          </Table>
+        </TableContainer>
+      </>
     );
   }
 

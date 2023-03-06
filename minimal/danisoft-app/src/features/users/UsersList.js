@@ -1,3 +1,4 @@
+import PersonAddAlt1TwoTone from "@mui/icons-material/PersonAddAlt1TwoTone";
 import {
   Table,
   TableBody,
@@ -5,11 +6,14 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
+import { Box } from "@mui/system";
+import { Link } from "react-router-dom";
+import CircularIndeterminate from "../../utils/CircularProgress";
 import User from "./User";
 import { useGetUsersQuery } from "./usersApiSlice";
-
 const UsersList = () => {
   const {
     data: users,
@@ -17,11 +21,15 @@ const UsersList = () => {
     isSuccess,
     isError,
     error,
-  } = useGetUsersQuery();
+  } = useGetUsersQuery(undefined, {
+    pollingInterval: 60000,
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
 
   let content;
 
-  if (isLoading) content = <p>Loading...</p>;
+  if (isLoading) content = <CircularIndeterminate />;
 
   if (isError) {
     content = <p className="errmsg">{error?.data?.message}</p>;
@@ -35,18 +43,27 @@ const UsersList = () => {
       : null;
 
     content = (
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Username</TableCell>
-              <TableCell align="center">Role</TableCell>
-              <TableCell align="right">Edit</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{tableContent}</TableBody>
-        </Table>
-      </TableContainer>
+      <>
+        <Box py={2}>
+          <Link to="/dash/users/new">
+            <IconButton aria-label="new">
+              <PersonAddAlt1TwoTone />
+            </IconButton>
+          </Link>
+        </Box>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Username</TableCell>
+                <TableCell align="center">Role</TableCell>
+                <TableCell align="right">Edit</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{tableContent}</TableBody>
+          </Table>
+        </TableContainer>
+      </>
     );
   }
 
