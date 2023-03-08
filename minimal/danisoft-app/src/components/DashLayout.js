@@ -1,6 +1,7 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ConfirmationNumberTwoToneIcon from "@mui/icons-material/ConfirmationNumberTwoTone";
 import DashboardCustomizeRoundedIcon from "@mui/icons-material/DashboardCustomizeRounded";
+import LogoutTwoToneIcon from "@mui/icons-material/LogoutTwoTone";
 import MenuIcon from "@mui/icons-material/Menu";
 import PeopleAltTwoToneIcon from "@mui/icons-material/PeopleAltTwoTone";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
@@ -16,8 +17,9 @@ import List from "@mui/material/List";
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useSendLogoutMutation } from "../features/auth/authApiSlice";
 /* import { mainListItems, secondaryListItems } from './listItems'; */
 /* import Chart from './Chart';
 import Deposits from './Deposits';
@@ -91,12 +93,22 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+const DashboardLayout = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [open, setOpen] = useState(true);
+  const [sendLogout, { isLoading, isSuccess, isError, error }] =
+    useSendLogoutMutation();
+
+  useEffect(() => {
+    if (isSuccess) navigate("/");
+  }, [isSuccess, navigate]);
+
+  if (isLoading) return <p>Logging Out...</p>;
+  if (isError) return <p>Error: {error.data?.message}</p>;
 
   const onGoHomeClicked = () => navigate("/dash");
 
-  const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -180,6 +192,15 @@ function DashboardContent() {
               </Link>
               <ListItemText primary="Users" />
             </ListItemButton>
+
+            <ListItemButton>
+              <ListItemIcon>
+                <IconButton onClick={sendLogout}>
+                  <LogoutTwoToneIcon />
+                </IconButton>
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItemButton>
           </List>
         </Drawer>
         <Box
@@ -205,8 +226,6 @@ function DashboardContent() {
       </Box>
     </ThemeProvider>
   );
-}
+};
 
-export default function DashboardLayout() {
-  return <DashboardContent />;
-}
+export default DashboardLayout;
