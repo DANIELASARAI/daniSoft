@@ -21,7 +21,7 @@ const NotesList = () => {
     isSuccess,
     isError,
     error,
-  } = useGetNotesQuery(undefined, {
+  } = useGetNotesQuery("notesList", {
     pollingInterval: 15000, //Notes will be more active than users list
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,

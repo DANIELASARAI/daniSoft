@@ -195,9 +195,7 @@ const DashboardLayout = () => {
 
             <ListItemButton>
               <ListItemIcon>
-                <IconButton onClick={sendLogout}>
-                  <LogoutTwoToneIcon />
-                </IconButton>
+                <LogoutTwoToneIcon onClick={sendLogout} />
               </ListItemIcon>
               <ListItemText primary="Logout" />
             </ListItemButton>

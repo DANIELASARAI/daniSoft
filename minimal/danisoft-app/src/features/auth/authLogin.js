@@ -13,6 +13,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import usePersist from "../../hooks/usePersist";
 
 // third party
 
@@ -34,6 +35,7 @@ const AuthLogin = () => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [persist, setPersist] = usePersist();
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -77,6 +79,7 @@ const AuthLogin = () => {
 
   const handleUserInput = (e) => setUsername(e.target.value);
   const handlePwdInput = (e) => setPassword(e.target.value);
+  const handleToggle = () => setPersist((prev) => !prev);
 
   const errClass = errMsg ? "errmsg" : "offscreen";
 
@@ -168,6 +171,16 @@ const AuthLogin = () => {
                 Login
               </Button>
             </AnimateButton>
+            <label htmlFor="persist" className="form__persist">
+              <input
+                type="checkbox"
+                className="form__checkbox"
+                id="persist"
+                onChange={handleToggle}
+                checked={persist}
+              />
+              Trust This Device
+            </label>
           </Grid>
         </Grid>
       </form>

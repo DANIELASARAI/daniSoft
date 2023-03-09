@@ -151,3 +151,33 @@ r. Go to auth/logout POST method and it should delete our cookie, we get cookie 
 s. Go and log in once again POST /auth with credentials and send, we receive a new accessToken and we are gonna use that in user or notes routes to that verifyJWT is working
 t. Click in Headers before body with the key Authorization and the value Bearer accessToken received. We received all the notes and users from GET methods in their endpoints before the accessToken get expired.
 u. We can also automate from our react app with redux next, when the request is forbidden, that's when we need to send the refresh token to get a new accessToken.
+9. [] Login Authentication. 
+a. Create authSlice.js inside features/auth folder. This is not an API slice but a redux traditional one. Import createSlice from reduxjs/toolkit
+b. Create the slice with the property and the object inside named and initial state token: null, because we expect to receive the token back from our api.
+c. Then we're gonna have 2 reducers as an object as well:
+*setCredentials 
+*logOut
+After we get some data from the api, we're gonna have a payload and that's gonna contain the access token and then we set the state.token to accessToken, because we are already inside of the auth slice with the name :'auth', we don't have to set state.auth.token
+Then, we also have a logOut reducer to set the state.token to null at logOut time. 
+Finnaly, export the reducers and the authSlice.reducer to add to the store
+d. Create a selector that selects the current token and refers to the state.auth.token this way, including the name of the slice created above. 
+e. Once the slice is created, go to the store and add is in app/store.js. Import it and use it inside the rducer object.
+f. We need a apiSlice as well, create it authApiSlice.js inside features/auth as well. Import apiSlice and logOut modules.
+g. Create the export const authApiSlice and inject the end points: 
+* login, it will be a mutation and define the query inside the mutation passing the credentials at '/auth' endpoint as a post method into the body object. 
+* sendLogout also a mutation named differently from the imported module logOut, goes to the endpoint '/auth/logout' route and post method as expected
+RTK query provides an onQueryStartedfunction taht can be called inside the endpoint, checking asyncronously if the query is fullfilled and dispatch our logOut reducer we imported above. Then, we clear out the cache and manage the error.
+* refresh also a mutation, we send a get request to this endpoint that includes the cookie and get a new accessToken when needed. Export all the mutations we created and get ready to work on Login component.
+h. Login.js. First,  import the things needed. Then, set some states. Define navigate and dispatch from the hooks imported and call the just needed useLoginMutation parameters. When the mutation is called, we can add a loading circular pogress component later. Define errClass in case there is an error. 
+i. Define the content and return it at the end. This is not a protected route. Provide a different header and footer. This is a public page. After creating the form and handle submit for it, let's create a logout button in our header.
+j. Go to DashLayout component. Import logout icon from mui material, also our hook useSendLogoutMutation,  const navigate = useNavigate(); also destructure the pathname
+10. Persiste Login State on Refresh.
+a. Define a baseQuery in api/apiSlice.js. After, run the server on port 3500, open the dev tools, network tab and see what happens. Go ahead and login and see the users and notes before the token expire. 
+b. add baseQueryWithReauth in api/apiSlice.js and use it as baseQuery. Run the server and test 
+c. On notesList and usersList components there is a bug, that the query is still attached to the components even when theyr're unmounted, so go to authApiSlice.js => set a timeout to confirm the unmounted list component and get rid of the api subscription. Go and login and see the difference, on redux tools subscriptions, first is the prefetch undefined notres, then, 'notesList', Try now refresh the page, login, look for the current state and logout, api/resetApiState, all the subscriptions values are gone.
+d. Work with persisting our login state, with a custom hook hooks/usePersist. It is much like a useLocalStorage. 
+e. Then go to features/auth/Login.js component, import the usePersist.js, define the state using this hook to setPersist and a handleToggle to use below with a checkbox. 
+f. Create a PersistLogin.js component.
+g. Add onQueryStarted inside the refresh module in authApiSlice.js
+h. import our PersistLogin.js component in our App.js wrapp from the Prefetch component everything.
+i. Let's try top test by Login and refresh the app to begin with a clean state, check Network on dev tools.  Set 15m, 15 m and 7 d the tokens i authController.js. Go Login checking trust this device, and it works as well. ready to add role-based access control and permissions. 
