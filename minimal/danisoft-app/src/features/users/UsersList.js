@@ -11,10 +11,12 @@ import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import { Box } from "@mui/system";
 import { Link } from "react-router-dom";
+import useTitle from "../../hooks/useTitle";
 import CircularIndeterminate from "../../utils/CircularProgress";
 import User from "./User";
 import { useGetUsersQuery } from "./usersApiSlice";
 const UsersList = () => {
+  useTitle("daniSoft: Users List");
   const {
     data: users,
     isLoading,
@@ -38,9 +40,8 @@ const UsersList = () => {
   if (isSuccess) {
     const { ids } = users;
 
-    const tableContent = ids?.length
-      ? ids.map((userId) => <User key={userId} userId={userId} />)
-      : null;
+    const tableContent =
+      ids?.length && ids.map((userId) => <User key={userId} userId={userId} />);
 
     content = (
       <>

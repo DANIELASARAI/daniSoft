@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, Outlet } from "react-router-dom";
 import usePersist from "../../hooks/usePersist";
+import CircularIndeterminate from "../../utils/CircularProgress";
 import { useRefreshMutation } from "./authApiSlice";
 import { selectCurrentToken } from "./authSlice";
 
@@ -47,13 +48,13 @@ const PersistLogin = () => {
   } else if (isLoading) {
     //persist: yes, token: no
     console.log("loading");
-    content = <p>Loading...</p>;
+    content = <CircularIndeterminate />;
   } else if (isError) {
     //persist: yes, token: no
     console.log("error");
     content = (
-      <p className="errmsg">
-        {error.data?.message}
+      <p>
+        {`${error?.data?.message} - `}
         <Link to="/login">Please login again</Link>.
       </p>
     );

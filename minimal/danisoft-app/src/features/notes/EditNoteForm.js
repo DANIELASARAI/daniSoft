@@ -8,15 +8,14 @@ import {
   Grid,
   InputLabel,
 } from "@mui/material";
-import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppTextField from "../../components/inputs/AppTextField";
 import { H3 } from "../../components/Typography";
+import useAuth from "../../hooks/useAuth";
 import { useDeleteNoteMutation, useUpdateNoteMutation } from "./notesApiSlice";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -29,7 +28,8 @@ const MenuProps = {
   },
 };
 const EditNoteForm = ({ note, users }) => {
-  console.log("🚀 ~ file: EditNoteForm.js:28 ~ EditNoteForm ~ note:", note);
+  console.log("🚀 ~ file: EditNoteForm.js:33 ~ EditNoteForm ~ note:", note);
+  const { isManager, isAdmin } = useAuth();
   const [updateNote, { isLoading, isSuccess, isError, error }] =
     useUpdateNoteMutation();
 
@@ -43,7 +43,7 @@ const EditNoteForm = ({ note, users }) => {
   const [title, setTitle] = useState(note.title);
   const [text, setText] = useState(note.text);
   const [completed, setCompleted] = useState(note.completed);
-  const [userId, setUserId] = useState(note.user);
+  const [userId, setUserId] = useState(note.username);
 
   useEffect(() => {
     if (isSuccess || isDelSuccess) {
@@ -79,6 +79,7 @@ const EditNoteForm = ({ note, users }) => {
     maxWidth: 360,
     bgcolor: "background.paper",
   };
+
   const created = new Date(note.createdAt).toLocaleString("en-US", {
     day: "numeric",
     month: "long",
@@ -95,7 +96,6 @@ const EditNoteForm = ({ note, users }) => {
     minute: "numeric",
     second: "numeric",
   });
-
   const errClass = isError || isDelError ? "errmsg" : "offscreen";
   const validTitleClass = !title ? "form__input--incomplete" : "";
   const validTextClass = !text ? "form__input--incomplete" : "";
@@ -118,7 +118,20 @@ const EditNoteForm = ({ note, users }) => {
       </option>
     );
   });
-
+  let deleteButton = null;
+  if (isManager || isAdmin) {
+    {
+      deleteButton = (
+        <button
+          className="icon-button"
+          title="Delete"
+          onClick={onDeleteNoteClicked}
+        >
+          <DeleteTwoToneIcon cursor="pointer" />
+        </button>
+      );
+    }
+  }
   const content = (
     <Box pt={2} pb={4}>
       <Grid container spacing={3}>
@@ -142,13 +155,7 @@ const EditNoteForm = ({ note, users }) => {
                 >
                   <SaveTwoToneIcon cursor="pointer" />
                 </button>
-                <button
-                  className="icon-button"
-                  title="Delete"
-                  onClick={onDeleteNoteClicked}
-                >
-                  <DeleteTwoToneIcon cursor="pointer" />
-                </button>
+                {deleteButton}
               </Box>
             </div>
 
@@ -249,7 +256,7 @@ const EditNoteForm = ({ note, users }) => {
                     </select>
                   </ListItem>
                 </List>
-                <List sx={style} component="nav" aria-label="mailbox folders">
+                {/*     <List sx={style} component="nav" aria-label="mailbox folders">
                   <ListItem>
                     <ListItemText primary="Created at:" secondary={created} />
                   </ListItem>
@@ -257,9 +264,9 @@ const EditNoteForm = ({ note, users }) => {
                   <ListItem>
                     <ListItemText primary="Updated at:" secondary={updated} />
                   </ListItem>
-                </List>
+                </List> */}
               </Box>
-              {/*  <div className="form__divider">
+              <div className="form__divider">
                 <p className="form__created">
                   Created:
                   <br />
@@ -270,7 +277,7 @@ const EditNoteForm = ({ note, users }) => {
                   <br />
                   {updated}
                 </p>
-              </div> */}
+              </div>
             </div>
           </form>
         </Card>

@@ -24,6 +24,7 @@ import AnimateButton from "../../components/buttons/animatedButton";
 // assets
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CircularIndeterminate from "../../utils/CircularProgress";
 import { useLoginMutation } from "./authApiSlice";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
@@ -83,7 +84,7 @@ const AuthLogin = () => {
 
   const errClass = errMsg ? "errmsg" : "offscreen";
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <CircularIndeterminate />;
 
   return (
     <>

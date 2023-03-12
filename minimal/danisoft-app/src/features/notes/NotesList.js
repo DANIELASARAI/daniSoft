@@ -11,10 +11,14 @@ import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import { Box } from "@mui/system";
 import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import useTitle from "../../hooks/useTitle";
 import CircularIndeterminate from "../../utils/CircularProgress";
 import Note from "./Note";
 import { useGetNotesQuery } from "./notesApiSlice";
 const NotesList = () => {
+  useTitle("daniSoft: Tickets List");
+  const { username, isManager, isAdmin } = useAuth();
   const {
     data: notes,
     isLoading,
@@ -36,11 +40,20 @@ const NotesList = () => {
   }
 
   if (isSuccess) {
-    const { ids } = notes;
+    const { ids, entities } = notes;
 
-    const tableContent = ids?.length
-      ? ids.map((noteId) => <Note key={noteId} noteId={noteId} />)
-      : null;
+    let filteredIds;
+    if (isManager || isAdmin) {
+      filteredIds = [...ids];
+    } else {
+      filteredIds = ids.filter(
+        (noteId) => entities[noteId].username === username
+      );
+    }
+
+    const tableContent =
+      ids?.length &&
+      filteredIds.map((noteId) => <Note key={noteId} noteId={noteId} />);
 
     content = (
       <>

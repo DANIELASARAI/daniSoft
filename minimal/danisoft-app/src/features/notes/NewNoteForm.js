@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react";
 import SaveTwoToneIcon from "@mui/icons-material/SaveTwoTone";
-import { Card, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { Card, Grid, InputLabel } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ const NewNoteForm = ({ users }) => {
 
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [userId, setUserId] = useState(users[0].id);
+  const [userId, setUserId] = useState(users[0].username);
 
   useEffect(() => {
     if (isSuccess) {
@@ -53,13 +53,13 @@ const NewNoteForm = ({ users }) => {
 
   const options = users.map((user) => {
     return (
-      <option key={user.id} value={user.id}>
+      <option key={user.id} value={user.username}>
         {" "}
         {user.username}
       </option>
     );
   });
-
+  console.log("🚀 ~ file: NewNoteForm.js:62 ~ options ~ users:", users);
   const errClass = isError ? "errmsg" : "offscreen";
   const validTitleClass = !title ? "form__input--incomplete" : "";
   const validTextClass = !text ? "form__input--incomplete" : "";
@@ -130,23 +130,14 @@ const NewNoteForm = ({ users }) => {
               /> */}
               <Grid item sm={6} xs={12}>
                 <InputLabel>Assigned to:</InputLabel>
-                <Select
+                <select
                   id="username"
                   name="username"
                   className="form__select"
-                  value={userId}
                   onChange={onUserIdChanged}
                 >
-                  {users.map((user) => (
-                    <MenuItem
-                      key={user.id}
-                      value={user.id}
-                      style={getStyles(user)}
-                    >
-                      {user.username}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  {options}
+                </select>
               </Grid>
             </Grid>
             {/*  <label className="form__label" htmlFor="title">

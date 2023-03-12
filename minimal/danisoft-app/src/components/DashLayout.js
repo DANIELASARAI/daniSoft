@@ -20,6 +20,8 @@ import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSendLogoutMutation } from "../features/auth/authApiSlice";
+import useAuth from "../hooks/useAuth";
+
 /* import { mainListItems, secondaryListItems } from './listItems'; */
 /* import Chart from './Chart';
 import Deposits from './Deposits';
@@ -94,6 +96,7 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 const DashboardLayout = () => {
+  const { username, isManager, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(true);
@@ -181,17 +184,19 @@ const DashboardLayout = () => {
               </Link>
               <ListItemText primary="Tickets" />
             </ListItemButton>
-            <ListItemButton>
-              <Link to="/dash/users">
-                <ListItemIcon>
-                  <PeopleAltTwoToneIcon
-                    onClick={onGoHomeClicked}
-                    cursor="pointer"
-                  />
-                </ListItemIcon>
-              </Link>
-              <ListItemText primary="Users" />
-            </ListItemButton>
+            {(isManager || isAdmin) && (
+              <ListItemButton>
+                <Link to="/dash/users">
+                  <ListItemIcon>
+                    <PeopleAltTwoToneIcon
+                      onClick={onGoHomeClicked}
+                      cursor="pointer"
+                    />
+                  </ListItemIcon>
+                </Link>
+                <ListItemText primary="Users" />
+              </ListItemButton>
+            )}
 
             <ListItemButton>
               <ListItemIcon>

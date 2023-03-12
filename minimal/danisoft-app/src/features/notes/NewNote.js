@@ -1,16 +1,17 @@
-import { useSelector } from "react-redux";
-import CircularIndeterminate from "../../utils/CircularProgress";
-import { selectAllUsers } from "../users/usersApiSlice";
+import { H1 } from "../../components/Typography";
+import { useGetUsersQuery } from "../users/usersApiSlice";
 import NewNoteForm from "./NewNoteForm";
 
 const NewNote = () => {
-  const users = useSelector(selectAllUsers);
-  if (!users.length) return <p>Not currently available</p>;
-  const content = users ? (
-    <NewNoteForm users={users} />
-  ) : (
-    <CircularIndeterminate />
-  ); //If we have users from the state, then, we are ready to create a note prepopulated with user data, otherwise we get loading.
+  const { users } = useGetUsersQuery("usersList", {
+    selectFromResult: ({ data }) => ({
+      users: data?.ids.map((id) => data?.entities[id]),
+    }),
+  });
+
+  if (!users?.length) return <H1>Loading Users</H1>;
+
+  const content = <NewNoteForm users={users} />;
 
   return content;
 };

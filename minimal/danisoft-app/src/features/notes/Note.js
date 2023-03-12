@@ -1,12 +1,15 @@
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import { ButtonGroup, TableCell, TableRow } from "@mui/material";
-import { useSelector } from "react-redux";
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
-import { selectNoteById } from "./notesApiSlice";
-
+import { useGetNotesQuery } from "./notesApiSlice";
 const Note = ({ noteId }) => {
-  const note = useSelector((state) => selectNoteById(state, noteId));
-  console.log("🚀 ~ file: Note.js:9 ~ Note ~ note:", note);
+  const { note } = useGetNotesQuery("notesList", {
+    selectFromResult: ({ data }) => ({
+      note: data?.entities[noteId],
+    }),
+  });
+  console.log("🚀 ~ file: Note.js:9 ~ Note ~ note :", note);
 
   const navigate = useNavigate();
 
@@ -15,6 +18,7 @@ const Note = ({ noteId }) => {
       day: "numeric",
       month: "long",
     });
+    console.log("🚀 ~ file: Note.js:15 ~ created ~ created:", created);
 
     const updated = new Date(note.updatedAt).toLocaleString("en-US", {
       day: "numeric",
@@ -49,4 +53,6 @@ const Note = ({ noteId }) => {
     );
   } else return null;
 };
-export default Note;
+const memoizedNote = memo(Note); //Component rerender if data change
+
+export default memoizedNote;

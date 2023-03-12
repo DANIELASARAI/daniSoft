@@ -11,21 +11,17 @@ const initialState = notesAdapter.getInitialState();
 export const notesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNotes: builder.query({
-      query: () => "/notes",
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
-      },
-      //keepUnusedDataFor:5, remove this. Leave the deafult as 60 seconds for subscriptions
+      query: () => ({
+        url: "/notes",
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
       transformResponse: (responseData) => {
         const loadedNotes = responseData.map((note) => {
           note.id = note._id;
           return note;
         });
-        console.log(
-          "🚀 ~ file: notesApiSlice.js:24 ~ loadedNotes ~ loadedNotes:",
-          loadedNotes
-        );
-
         return notesAdapter.setAll(initialState, loadedNotes);
       },
       providesTags: (result, error, arg) => {
